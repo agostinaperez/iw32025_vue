@@ -26,15 +26,19 @@
       No se encontraron productos.
     </p>
 
-    <CarritoComponent :items="carrito" />
+    <CarritoComponent
+      :items="carrito"
+      @update:items="actualizarCarrito"
+      :productos="productos"
+    />
   </v-container>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import ProductoItem from '../components/ProductoItem.vue';
-import { useRouter } from 'vue-router';
 import CarritoComponent from '../components/CarritoComponent.vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
@@ -43,6 +47,13 @@ const productos = ref([
   { id: 2, nombre: 'Producto B', precio: 200, stock: 0 },
   { id: 3, nombre: 'Producto C', precio: 150, stock: 10 },
 ]);
+
+// Guardamos el stock original para poder recalcularlo
+const stockOriginal = {
+  1: 5,
+  2: 0,
+  3: 10
+};
 
 const busqueda = ref('');
 const carrito = ref([]);
@@ -53,9 +64,12 @@ const productosFiltrados = computed(() => {
   );
 });
 
+// Agregar producto al carrito
 function agregarAlCarrito(id) {
   const producto = productos.value.find(p => p.id === id);
-  if (!producto) return;
+  if (!producto || producto.stock <= 0) return;
+
+  producto.stock--;
 
   const item = carrito.value.find(i => i.id === id);
   if (item) {
@@ -65,9 +79,19 @@ function agregarAlCarrito(id) {
   }
 }
 
+// Actualiza carrito desde el componente hijo
+function actualizarCarrito(nuevoCarrito) {
+  carrito.value = nuevoCarrito;
+
+  // Recalcular stock
+  productos.value.forEach(p => {
+    const enCarrito = carrito.value.find(i => i.id === p.id);
+    const cantidadEnCarrito = enCarrito ? enCarrito.cantidad : 0;
+    p.stock = stockOriginal[p.id] - cantidadEnCarrito;
+  });
+}
+
 function verDetalle(id) {
   router.push({ name: 'producto-detalle', params: { id } });
 }
 </script>
-
-
