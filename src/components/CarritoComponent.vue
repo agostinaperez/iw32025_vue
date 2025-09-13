@@ -1,12 +1,12 @@
 <template>
   <v-card class="mt-6">
     <v-card-title>Carrito</v-card-title>
-    <v-card-text v-if="items.length === 0">
+    <v-card-text v-if="props.items.length === 0">
       El carrito está vacío
     </v-card-text>
     <v-card-text v-else>
       <v-row
-        v-for="item in items"
+        v-for="item in props.items"
         :key="item.id"
         class="mb-2"
       >
@@ -38,17 +38,16 @@
 <script setup>
 import { computed } from 'vue';
 
-defineProps({
+const props = defineProps({
   items: {
     type: Array,
-    default: () => []  // obligatorio usar función para arrays/objetos
+    default: () => []
   },
   default: {
     type: [String, Number, Boolean, Array, Object], 
     default: ""
   }
 })
-
 
 const emit = defineEmits(['update:items']);
 
@@ -59,12 +58,12 @@ function incrementar(item) {
 function decrementar(item) {
   item.cantidad--;
   if (item.cantidad <= 0) {
-    const index = items.indexOf(item);
-    if (index > -1) items.splice(index, 1);
+    const index = props.items.indexOf(item);
+    if (index > -1) props.items.splice(index, 1);
   }
 }
 
 const total = computed(() => {
-  return items.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+  return props.items.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
 });
 </script>
