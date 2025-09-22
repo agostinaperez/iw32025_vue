@@ -14,6 +14,10 @@
         Productos
       </v-btn>
 
+      <v-btn text :to="{ name: 'carrito' }">
+        Mi carrito
+      </v-btn>
+
       <template v-if="auth.state.user">
         <span class="mr-4 font-weight-medium">
           {{ auth.state.user.email }}

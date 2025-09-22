@@ -27,48 +27,39 @@
       </v-col>
     </v-row>
 
-    <!-- Mensaje si no hay productos -->
     <p v-if="productosFiltrados.length === 0" class="text-center mt-6">
       No se encontraron productos.
     </p>
 
-    <!-- Carrito -->
-    <CarritoComponent
-      :items="carrito"
-      @update:items="actualizarCarrito"
-      :productos="productos"
-      class="mt-8"
-    />
+   <v-snackbar
+      v-model="snackbar"
+      color="green"
+      timeout="2000"
+      location="bottom center"
+    >
+      {{ mensajeSnackbar }}
+    </v-snackbar>
   </v-container>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import ProductoItem from '../components/ProductoItem.vue';
-import CarritoComponent from '../components/CarritoComponent.vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { useCart } from '../composables/useCart';
+import ProductoItem from '../components/ProductoItem.vue';
 
 const router = useRouter();
 const auth = useAuth();
-
-const productos = ref([
-  { id: 1, nombre: 'Producto A', precio: 100, stock: 5 },
-  { id: 2, nombre: 'Producto B', precio: 200, stock: 0 },
-  { id: 3, nombre: 'Producto C', precio: 150, stock: 10 },
-]);
-
-const stockOriginal = {
-  1: 5,
-  2: 0,
-  3: 10
-};
+const snackbar = ref(false);
+const mensajeSnackbar = ref('');
+const { addToCart, productosConStock } = useCart();
 
 const busqueda = ref('');
-const carrito = ref([]);
 
+// Filtrado dinámico
 const productosFiltrados = computed(() =>
-  productos.value.filter(p =>
+  productosConStock.value.filter(p =>
     p.nombre.toLowerCase().includes(busqueda.value.toLowerCase())
   )
 );
@@ -79,28 +70,12 @@ function handleAddToCart(id) {
     return;
   }
 
-  const producto = productos.value.find(p => p.id === id);
+  const producto = productosConStock.value.find(p => p.id === id);
   if (!producto || producto.stock <= 0) return;
 
-  producto.stock--;
-
-  const item = carrito.value.find(i => i.id === id);
-  if (item) {
-    item.cantidad++;
-  } else {
-    carrito.value.push({ ...producto, cantidad: 1 });
-  }
-}
-
-function actualizarCarrito(nuevoCarrito) {
-  carrito.value = nuevoCarrito;
-
-  // Recalcular stock
-  productos.value.forEach(p => {
-    const enCarrito = carrito.value.find(i => i.id === p.id);
-    const cantidadEnCarrito = enCarrito ? enCarrito.cantidad : 0;
-    p.stock = stockOriginal[p.id] - cantidadEnCarrito;
-  });
+  addToCart(producto);
+  mensajeSnackbar.value = `${producto.nombre} agregado al carrito`;
+  snackbar.value = true;
 }
 
 function verDetalle(id) {

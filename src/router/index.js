@@ -4,12 +4,14 @@ import ProductsView from "../views/ProductsView.vue";
 import ProductoDetalleView from "../views/ProductoDetalleView.vue";
 import LoginView from "../views/LoginView.vue";
 import { isAuthenticated } from '../composables/useAuth';
+import CartView from "../views/CartView.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomeView, meta: { requiresAuth: false } },
   { path: "/productos", name: "productos", component: ProductsView, meta: { requiresAuth: false } },
   { path: "/productos/:id", name: "producto-detalle", component: ProductoDetalleView, props: true, meta: { requiresAuth: true } },
   { path: "/login", name: "login", component: LoginView },
+  { path: '/carrito', name: 'carrito', component: CartView, meta: { requiresAuth: true } },
   ];
 
 const router = createRouter({
