@@ -16,7 +16,7 @@
       >
         <ProductoItem
           :producto="producto"
-          @add-to-cart="agregarAlCarrito"
+          @add-to-cart="handleAddToCart"
           @ver-detalle="verDetalle"
         />
       </v-col>
@@ -39,8 +39,10 @@ import { ref, computed } from 'vue';
 import ProductoItem from '../components/ProductoItem.vue';
 import CarritoComponent from '../components/CarritoComponent.vue';
 import { useRouter } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
 
 const router = useRouter();
+const auth = useAuth();
 
 const productos = ref([
   { id: 1, nombre: 'Producto A', precio: 100, stock: 5 },
@@ -48,7 +50,6 @@ const productos = ref([
   { id: 3, nombre: 'Producto C', precio: 150, stock: 10 },
 ]);
 
-// Guardamos el stock original para poder recalcularlo
 const stockOriginal = {
   1: 5,
   2: 0,
@@ -58,14 +59,18 @@ const stockOriginal = {
 const busqueda = ref('');
 const carrito = ref([]);
 
-const productosFiltrados = computed(() => {
-  return productos.value.filter(p =>
+const productosFiltrados = computed(() =>
+  productos.value.filter(p =>
     p.nombre.toLowerCase().includes(busqueda.value.toLowerCase())
-  );
-});
+  )
+);
 
-// Agregar producto al carrito
-function agregarAlCarrito(id) {
+function handleAddToCart(id) {
+  if (!auth.isAuthenticated()) {
+    router.push({ name: 'login' });
+    return;
+  }
+
   const producto = productos.value.find(p => p.id === id);
   if (!producto || producto.stock <= 0) return;
 
@@ -79,7 +84,6 @@ function agregarAlCarrito(id) {
   }
 }
 
-// Actualiza carrito desde el componente hijo
 function actualizarCarrito(nuevoCarrito) {
   carrito.value = nuevoCarrito;
 

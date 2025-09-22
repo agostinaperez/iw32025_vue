@@ -4,6 +4,7 @@
     <v-card-text>
       Precio: {{ producto.precio }} <br>
       Stock: {{ producto.stock }}
+      <span v-if="producto.stock === 0"> (Agotado)</span>
     </v-card-text>
     <v-card-actions>
       <v-btn
