@@ -7,8 +7,12 @@
       dark
       elevate-on-scroll
     >
-      <v-toolbar-title class="font-weight-bold">Mi Tienda</v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold">Moda Shop</v-toolbar-title>
       <v-spacer />
+
+      <v-btn text :to="{ name: 'home' }">
+        Inicio
+      </v-btn>
 
       <v-btn text :to="{ name: 'productos' }">
         Productos
