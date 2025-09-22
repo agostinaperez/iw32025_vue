@@ -1,8 +1,13 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar app color="blue darken-2" dark>
-      <v-toolbar-title>Mi Tienda</v-toolbar-title>
+    <v-app-bar
+      app
+      color="#880e4f"
+      dark
+      elevate-on-scroll
+    >
+      <v-toolbar-title class="font-weight-bold">Mi Tienda</v-toolbar-title>
       <v-spacer />
 
       <v-btn text :to="{ name: 'productos' }">
@@ -10,17 +15,31 @@
       </v-btn>
 
       <template v-if="auth.state.user">
-        <span class="mr-4">{{ auth.state.user.email }}</span>
-        <v-btn text @click="handleLogout">Cerrar sesión</v-btn>
+        <span class="mr-4 font-weight-medium">
+          {{ auth.state.user.email }}
+        </span>
+        <v-btn
+          text
+          color="white"
+          @click="handleLogout"
+        >
+          Cerrar sesión
+        </v-btn>
       </template>
+
       <template v-else>
-        <v-btn text :to="{ name: 'login' }">Iniciar Sesión</v-btn>
+        <v-btn
+          text
+          color="white"
+          :to="{ name: 'login' }"
+        >
+          Iniciar Sesión
+        </v-btn>
       </template>
     </v-app-bar>
 
-    <!-- Contenido -->
     <v-main>
-      <v-container class="mt-5">
+      <v-container class="mt-5 pa-0 fill-height" fluid>
         <router-view />
       </v-container>
     </v-main>
@@ -39,3 +58,14 @@ function handleLogout() {
   router.push({ name: "login" })
 }
 </script>
+
+<style scoped>
+
+.v-toolbar-title {
+  letter-spacing: 1px;
+}
+
+.v-btn {
+  text-transform: none;
+}
+</style>

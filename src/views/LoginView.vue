@@ -1,9 +1,14 @@
 <template>
-  <v-container class="fill-height" fluid>
+  <v-container class="fill-height login-background" fluid>
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="5" lg="4">
-        <v-card elevation="6" class="pa-6 rounded-2xl">
-          <v-card-title class="justify-center">Ingresar</v-card-title>
+        <v-card
+          elevation="6"
+          class="pa-6 rounded-2xl login-card"
+        >
+          <v-card-title class="justify-center">
+            Ingresar
+          </v-card-title>
 
           <v-card-text>
             <form @submit.prevent="onSubmit" novalidate>
@@ -11,11 +16,12 @@
                 v-model="email"
                 label="Email"
                 :error-messages="emailErrors"
-                :rules="[]"
                 required
                 autocomplete="username"
                 aria-label="email"
                 aria-required="true"
+                outlined
+                dense
               />
               <v-text-field
                 v-model="password"
@@ -26,22 +32,32 @@
                 autocomplete="current-password"
                 aria-label="contraseña"
                 aria-required="true"
+                outlined
+                dense
+                class="mt-4"
               />
 
-              <div class="mt-4 d-flex justify-space-between align-center">
+              <div class="mt-6 d-flex flex-column align-center">
                 <v-btn
                   :disabled="!formValido || loading"
                   type="submit"
-                  class="ma-0"
+                  large
+                  rounded
+                  color="#880e4f"
+                  dark
                 >
                   <span v-if="!loading">Ingresar</span>
-                  <span v-else>
-                    <v-progress-circular indeterminate size="18" width="2" />
-                    &nbsp;Ingresando...
-                  </span>
+                  <v-progress-circular
+                    v-else
+                    indeterminate
+                    color="white"
+                    size="20"
+                    width="2"
+                  />
+                  <span v-if="loading">&nbsp;Ingresando...</span>
                 </v-btn>
 
-                <div v-if="errorMessage" class="text-error" role="alert" aria-live="assertive">
+                <div v-if="errorMessage" class="text-error mt-3" role="alert" aria-live="assertive">
                   {{ errorMessage }}
                 </div>
               </div>
@@ -54,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { login, isAuthenticated, authState } from '../composables/useAuth';
 
@@ -84,7 +100,7 @@ const formValido = computed(() => emailErrors.value.length === 0 && passwordErro
 
 // si ya está autenticado evitamos ingresar a login
 if (isAuthenticated()) {
-  router.replace({ path: '/' });
+  router.replace({ path: '/productos' });
 }
 
 async function onSubmit() {
@@ -97,17 +113,40 @@ async function onSubmit() {
     return;
   }
 
-  // redirigir al home o a la ruta a la que intentó acceder (si la guard la guardó en query)
+  // redirigir al home o a la ruta que intentó acceder
   const redirect = router.currentRoute.value?.query?.redirect || '/productos';
   router.replace(redirect);
 }
 </script>
 
 <style scoped>
-.rounded-2xl {
-  border-radius: 1rem; /* 2xl approx */
+.fill-height {
+  min-height: 100vh;
 }
+
+.login-background {
+  background-color: #ffffff; /* fondo blanco general */
+}
+
+.login-card {
+  background-color: #ffc9db;
+  color: black;
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
 .text-error {
   color: #b00020;
+}
+
+.v-card-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.v-btn {
+  text-transform: none;
 }
 </style>

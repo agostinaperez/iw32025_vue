@@ -1,11 +1,16 @@
 <template>
-  <v-container>
+  <v-container class="products-background py-6">
+    <!-- Buscador -->
     <v-text-field
       v-model="busqueda"
       label="Buscar productos"
-      class="mb-4"
+      outlined
+      dense
+      class="mb-6"
+      color="#f48fb1"
     />
 
+    <!-- Lista de productos -->
     <v-row>
       <v-col
         v-for="producto in productosFiltrados"
@@ -22,14 +27,17 @@
       </v-col>
     </v-row>
 
-    <p v-if="productosFiltrados.length === 0">
+    <!-- Mensaje si no hay productos -->
+    <p v-if="productosFiltrados.length === 0" class="text-center mt-6">
       No se encontraron productos.
     </p>
 
+    <!-- Carrito -->
     <CarritoComponent
       :items="carrito"
       @update:items="actualizarCarrito"
       :productos="productos"
+      class="mt-8"
     />
   </v-container>
 </template>
@@ -99,3 +107,27 @@ function verDetalle(id) {
   router.push({ name: 'producto-detalle', params: { id } });
 }
 </script>
+
+<style scoped>
+.products-background {
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+</style>
